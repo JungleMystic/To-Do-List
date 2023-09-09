@@ -43,13 +43,20 @@ class ToDoListFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = ToDoListAdapter {
+        val adapter = ToDoListAdapter(requireActivity(), requireContext(), viewModel) {
             Toast.makeText(requireContext(), "Item Clicked", Toast.LENGTH_SHORT).show()
         }
 
         binding.recyclerView.adapter = adapter
         viewModel.getAll.observe(this.viewLifecycleOwner) { todo ->
-            todo.let { adapter.submitList(it) }
+            if (todo.isEmpty()) {
+                binding.recyclerView.visibility = View.GONE
+                binding.noTodoFound.visibility = View.VISIBLE
+            } else {
+                binding.recyclerView.visibility = View.VISIBLE
+                binding.noTodoFound.visibility = View.GONE
+                todo.let { adapter.submitList(it) }
+            }
         }
 
         binding.addItemFab.setOnClickListener {

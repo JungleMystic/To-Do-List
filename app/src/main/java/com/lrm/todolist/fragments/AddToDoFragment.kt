@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.datepicker.CalendarConstraints
@@ -79,6 +80,7 @@ class AddToDoFragment : DialogFragment() {
         if (viewModel.isEntryValid(requireContext(), title, date, time)) {
             viewModel.addNewToDo(title, date, time)
             dismiss()
+            Toast.makeText(requireContext(), "Successfully added...", Toast.LENGTH_SHORT).show()
         }
     }
 

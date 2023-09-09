@@ -36,18 +36,21 @@ class ToDoViewModel(
                 Toast.makeText(context, "Please enter Title...", Toast.LENGTH_SHORT).show()
                 false
             }
-
             TextUtils.isEmpty(date) -> {
                 Toast.makeText(context, "Please select a date", Toast.LENGTH_SHORT).show()
                 false
             }
-
             TextUtils.isEmpty(time) -> {
                 Toast.makeText(context, "Please select time", Toast.LENGTH_SHORT).show()
                 false
             }
-
             else -> true
+        }
+    }
+
+    fun deleteEvent(todo: ToDoEntity) {
+        viewModelScope.launch {
+            toDoDao.delete(todo)
         }
     }
 }
