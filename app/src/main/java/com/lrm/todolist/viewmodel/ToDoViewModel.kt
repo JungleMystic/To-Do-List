@@ -1,5 +1,8 @@
 package com.lrm.todolist.viewmodel
 
+import android.content.Context
+import android.text.TextUtils
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
@@ -25,6 +28,27 @@ class ToDoViewModel(
     fun addNewToDo(title: String, date: String, time: String) {
         val toDo = ToDoEntity(title = title, date = date, time = time)
         insertToDo(toDo)
+    }
+
+    fun isEntryValid(context: Context, title: String, date: String, time: String): Boolean {
+        return when {
+            TextUtils.isEmpty(title) -> {
+                Toast.makeText(context, "Please enter Title...", Toast.LENGTH_SHORT).show()
+                false
+            }
+
+            TextUtils.isEmpty(date) -> {
+                Toast.makeText(context, "Please select a date", Toast.LENGTH_SHORT).show()
+                false
+            }
+
+            TextUtils.isEmpty(time) -> {
+                Toast.makeText(context, "Please select time", Toast.LENGTH_SHORT).show()
+                false
+            }
+
+            else -> true
+        }
     }
 }
 

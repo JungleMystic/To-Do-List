@@ -3,10 +3,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="add_todo">Add ToDo</string>
-    <string name="enter_title">Enter Title</string>
-    <string name="date_hint">DD/MM/YYYY</string>
-    <string name="date">Date</string>
-    <string name="time">Time</string>
+    <string name="enter_title">Enter Title <font color='#f9154a'>*</font></string>
+    <string name="date">Date <font color='#f9154a'>*</font></string>
+    <string name="time">Time <font color='#f9154a'>*</font></string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
 </resources>

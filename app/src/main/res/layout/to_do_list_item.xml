@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             tools:text="09-09-2023"
             android:textSize="14sp"
-            android:fontFamily="@font/quicksand_bold"
+            android:fontFamily="@font/quicksand_regular"
             app:layout_constraintTop_toBottomOf="@id/title"
             app:layout_constraintStart_toStartOf="@id/title"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             tools:text="01:00 PM"
             android:textSize="14sp"
-            android:fontFamily="@font/quicksand_bold"
+            android:fontFamily="@font/quicksand_regular"
             app:layout_constraintTop_toTopOf="@id/date"
             app:layout_constraintStart_toEndOf="@id/date"
             android:layout_marginStart="20dp"/>
