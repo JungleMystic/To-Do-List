@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import com.lrm.todolist.R
 import com.lrm.todolist.ToDoApplication
 import com.lrm.todolist.adapter.ToDoListAdapter
@@ -54,8 +53,8 @@ class ToDoListFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         }
 
         binding.addItemFab.setOnClickListener {
-            val action = ToDoListFragmentDirections.actionToDoListFragmentToAddToDoFragment()
-            this@ToDoListFragment.findNavController().navigate(action)
+            val addDialog = AddToDoFragment()
+            addDialog.show(requireActivity().supportFragmentManager, "Add ToDo Dialog")
         }
     }
 

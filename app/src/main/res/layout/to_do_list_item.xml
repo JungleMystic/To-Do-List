@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             tools:text="Cooking"
             android:textColor="@color/blue"
-            android:textSize="22sp"
+            android:textSize="18sp"
             android:fontFamily="@font/quicksand_bold"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -37,12 +37,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="09-09-2023"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:fontFamily="@font/quicksand_bold"
             app:layout_constraintTop_toBottomOf="@id/title"
             app:layout_constraintStart_toStartOf="@id/title"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="15dp"
             android:layout_marginBottom="20dp"/>
 
         <TextView
@@ -50,11 +50,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="01:00 PM"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:fontFamily="@font/quicksand_bold"
-            app:layout_constraintTop_toBottomOf="@id/title"
+            app:layout_constraintTop_toTopOf="@id/date"
             app:layout_constraintStart_toEndOf="@id/date"
-            android:layout_marginTop="20dp"
             android:layout_marginStart="20dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -34,7 +34,7 @@ class SplashScreenFragment : Fragment() {
         Handler(Looper.getMainLooper()).postDelayed({
             val action = SplashScreenFragmentDirections.actionSplashScreenFragmentToToDoListFragment()
             this@SplashScreenFragment.findNavController().navigate(action)
-        }, 2500)
+        }, 2000)
 
     }
 
