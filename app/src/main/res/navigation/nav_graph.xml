@@ -9,5 +9,18 @@
         android:id="@+id/splashScreenFragment"
         android:name="com.lrm.todolist.fragments.SplashScreenFragment"
         android:label="fragment_splash_screen"
-        tools:layout="@layout/fragment_splash_screen" />
+        tools:layout="@layout/fragment_splash_screen" >
+        <action
+            android:id="@+id/action_splashScreenFragment_to_toDoListFragment"
+            app:destination="@id/toDoListFragment"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/pop_enter_anim"
+            app:popExitAnim="@anim/pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/toDoListFragment"
+        android:name="com.lrm.todolist.fragments.ToDoListFragment"
+        android:label="ToDoListFragment"
+        tools:layout="@layout/fragment_to_do_list"/>
 </navigation>

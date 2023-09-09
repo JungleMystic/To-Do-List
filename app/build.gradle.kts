@@ -4,6 +4,10 @@ plugins {
     // SafeArgs
     id ("androidx.navigation.safeargs.kotlin")
 
+    // databinding
+    id ("kotlin-kapt")
+    id ("kotlin-android")
+
     // ksp
     id ("com.google.devtools.ksp")
 }
@@ -40,7 +44,7 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true
+        dataBinding = true
     }
 }
 
