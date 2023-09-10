@@ -151,8 +151,7 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
         intent.putExtra("Title", binding.title.text.toString())
         intent.putExtra("Message", "Reminder: $date  $time")
 
-        val pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent,
-            PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, setCalendar.timeInMillis, pendingIntent)
     }
