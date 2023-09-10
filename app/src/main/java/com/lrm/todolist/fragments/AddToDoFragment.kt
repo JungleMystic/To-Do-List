@@ -149,7 +149,7 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
         val alarmManager = requireActivity().getSystemService(ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireActivity(), AlarmReceiver::class.java)
         intent.putExtra("Title", binding.title.text.toString())
-        intent.putExtra("Message", "Reminder: $date  $time")
+        intent.putExtra("Message", "ToDo on: $date  $time")
 
         val pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE)
 

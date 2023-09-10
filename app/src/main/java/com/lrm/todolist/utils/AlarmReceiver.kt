@@ -33,6 +33,7 @@ class AlarmReceiver : BroadcastReceiver() {
             .setContentText(messageText)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(pendingIntent)
+            .setGroup("ToDo Reminders")
             .setAutoCancel(true)
             .build()
 
