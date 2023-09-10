@@ -12,6 +12,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.lrm.todolist.MainActivity
 import com.lrm.todolist.R
 import com.lrm.todolist.constants.CHANNEL_ID
+import java.util.Date
 
 class AlarmReceiver : BroadcastReceiver() {
 
@@ -30,7 +31,7 @@ class AlarmReceiver : BroadcastReceiver() {
             .setSmallIcon(R.drawable.app_icon)
             .setContentTitle(notificationTitle)
             .setContentText(messageText)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .build()
@@ -44,7 +45,9 @@ class AlarmReceiver : BroadcastReceiver() {
             ) {
                 return@with
             }
-            notify(120, builder)
+            notify(getNotificationId(), builder)
         }
     }
+
+    private fun getNotificationId(): Int = (Date().time/1000 % Integer.MAX_VALUE).toInt()
 }
