@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -38,6 +39,7 @@ class ToDoListAdapter(
                 binding.toDoCard.strokeWidth = 1
                 binding.title.setTypeface(null, Typeface.NORMAL)
                 binding.title.setTextColor(ContextCompat.getColor(context, R.color.light_grey))
+                binding.readIcon.visibility = View.VISIBLE
             }
         }
     }
