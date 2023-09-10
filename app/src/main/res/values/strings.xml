@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">ToDo</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="add_todo">Add ToDo</string>
     <string name="edit_todo">Edit ToDo</string>
@@ -18,4 +16,12 @@
 
     <string name="nothing_todo">Nothing ToDo…</string>
     <string name="update">Update</string>
+
+    <string name="developer_info">Developer Info</string>
+    <string name="dev_name">Rammohan Locharla</string>
+    <string name="code_name">code name</string>
+    <string name="dev_code_name">Jungle Mystic</string>
+    <string name="about_me">About Me</string>
+    <string name="dev_about">CA Aspirant by academics &amp; Android Kotlin Developer by passion. \n \n Pet Lover, Music Lover, Foodie, sometimes cook.</string>
+
 </resources>

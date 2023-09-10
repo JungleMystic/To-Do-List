@@ -1,6 +1,11 @@
 package com.lrm.todolist.fragments
 
 import android.Manifest
+import android.app.AlertDialog
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +17,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.bumptech.glide.Glide
 import com.lrm.todolist.R
 import com.lrm.todolist.ToDoApplication
 import com.lrm.todolist.adapter.ToDoListAdapter
@@ -22,6 +28,7 @@ import com.lrm.todolist.viewmodel.ToDoViewModel
 import com.lrm.todolist.viewmodel.ToDoViewModelFactory
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
+import de.hdodenhof.circleimageview.CircleImageView
 
 class ToDoListFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
@@ -75,6 +82,16 @@ class ToDoListFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             val addDialog = AddToDoFragment()
             addDialog.show(childFragmentManager, "Add ToDo Dialog")
         }
+
+        binding.appIcon.setOnLongClickListener {
+            showDeveloperInfoDialog()
+            true
+        }
+
+        binding.appName.setOnLongClickListener {
+            showDeveloperInfoDialog()
+            true
+        }
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
@@ -114,6 +131,34 @@ class ToDoListFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
         // EasyPermissions handles the request result
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+    private fun showDeveloperInfoDialog() {
+        val dialogView = requireActivity().layoutInflater.inflate(R.layout.custom_developer_info, null)
+        val imageLink = "https://firebasestorage.googleapis.com/v0/b/gdg-vizag-f9bf0.appspot.com/o/gdg_vizag%2Fdeveloper%2FRammohan_L_pic.png?alt=media&token=6e55ba28-e0ca-45c6-b50b-be1955da2566"
+        val devImage = dialogView.findViewById<CircleImageView>(R.id.dev_image)
+        Glide.with(requireContext()).load(imageLink).placeholder(R.drawable.loading_icon_anim).into(devImage)
+
+        val devGithubLink = dialogView.findViewById<CircleImageView>(R.id.dev_github_link)
+        val devYoutubeLink = dialogView.findViewById<CircleImageView>(R.id.dev_youtube_link)
+
+        devGithubLink.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/JungleMystic"))
+            startActivity(intent)
+        }
+
+        devYoutubeLink.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://youtube.com/@junglemystic"))
+            startActivity(intent)
+        }
+
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setView(dialogView)
+        builder.setCancelable(true)
+
+        val developerDialog = builder.create()
+        developerDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        developerDialog.show()
     }
 
     override fun onDestroyView() {
