@@ -3,6 +3,7 @@ package com.lrm.todolist.viewmodel
 import android.content.Context
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
@@ -46,6 +47,22 @@ class ToDoViewModel(
             }
             else -> true
         }
+    }
+
+    fun retrieveEvent(id: Int): LiveData<ToDoEntity> {
+        return toDoDao.getToDo(id).asLiveData()
+    }
+
+    private fun updateToDo(todo: ToDoEntity) {
+        viewModelScope.launch {
+            toDoDao.update(todo)
+        }
+    }
+
+    // Get the New To do item and calling insertTodo function
+    fun getUpdatedToDO(id: Int, title: String, date: String, time: String, isShow: Int) {
+        val toDo = ToDoEntity(id, title, date, time, isShow)
+        updateToDo(toDo)
     }
 
     fun deleteEvent(todo: ToDoEntity) {

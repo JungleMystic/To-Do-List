@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -18,6 +19,7 @@ import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_CLOC
 import com.google.android.material.timepicker.TimeFormat
 import com.lrm.todolist.R
 import com.lrm.todolist.ToDoApplication
+import com.lrm.todolist.database.ToDoEntity
 import com.lrm.todolist.databinding.FragmentAddToDoBinding
 import com.lrm.todolist.viewmodel.ToDoViewModel
 import com.lrm.todolist.viewmodel.ToDoViewModelFactory
@@ -25,7 +27,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class AddToDoFragment : DialogFragment() {
+class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
 
     private var _binding: FragmentAddToDoBinding? = null
     private val binding get() = _binding!!
@@ -55,8 +57,26 @@ class AddToDoFragment : DialogFragment() {
         // To dismiss the dialog fragment
         binding.closeBtn.setOnClickListener { dismiss() }
 
-        // To get the focus to Title Edit text
-        binding.title.requestFocus()
+        if (toDoId > 0) {
+            // Setting the title of this dialog based on the toDoId
+            binding.dialogTitle.text = getString(R.string.edit_todo)
+
+            viewModel.retrieveEvent(toDoId).observe(this.viewLifecycleOwner) {todo ->
+                bindData(todo)
+            }
+            binding.save.text = getString(R.string.update)
+
+
+        } else {
+            // Setting the title of this dialog based on the toDoId
+            binding.dialogTitle.text = getString(R.string.add_todo)
+
+            // To get the focus to Title Edit text
+            binding.title.requestFocus()
+
+            // To save the To Do item in database
+            binding.save.setOnClickListener { addNewToDO() }
+        }
 
         // To show the date picker dialog
         binding.date.setOnClickListener { showDatePickerDialog() }
@@ -66,12 +86,21 @@ class AddToDoFragment : DialogFragment() {
 
         // To dismiss the dialog fragment
         binding.cancel.setOnClickListener { dismiss() }
-
-        // To save the To Do item in database
-        binding.save.setOnClickListener { addNewItem() }
     }
 
-    private fun addNewItem() {
+    private fun bindData(todo: ToDoEntity) {
+        binding.apply {
+            title.setText(todo.title, TextView.BufferType.SPANNABLE)
+            date.setText(todo.date, TextView.BufferType.SPANNABLE)
+            time.setText(todo.time, TextView.BufferType.SPANNABLE)
+
+            // To update the To Do item in database
+            binding.save.setOnClickListener {updateToDo()}
+        }
+    }
+
+    private fun addNewToDO() {
+        // Getting the data from edit text fields and storing in the below variables.
         val title = binding.title.text.toString()
         val date = binding.date.text.toString()
         val time = binding.time.text.toString()
@@ -81,6 +110,20 @@ class AddToDoFragment : DialogFragment() {
             viewModel.addNewToDo(title, date, time)
             dismiss()
             Toast.makeText(requireContext(), "Successfully added...", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun updateToDo() {
+        // Getting the data from edit text fields and storing in the below variables.
+        val title = binding.title.text.toString()
+        val date = binding.date.text.toString()
+        val time = binding.time.text.toString()
+
+        // Check if all the fields are not empty
+        if (viewModel.isEntryValid(requireContext(), title, date, time)) {
+            viewModel.getUpdatedToDO(toDoId, title, date, time, 0)
+            dismiss()
+            Toast.makeText(requireContext(), "Successfully updated...", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -109,6 +152,9 @@ class AddToDoFragment : DialogFragment() {
     }
 
     private fun showTimePickerDialog() {
+
+        //val currentTime =
+
         val timePicker =
             MaterialTimePicker.Builder()
                 .setTimeFormat(TimeFormat.CLOCK_12H)

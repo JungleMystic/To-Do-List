@@ -1,11 +1,13 @@
 package com.lrm.todolist.fragments
 
 import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -43,8 +45,13 @@ class ToDoListFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (!hasPermission()) requestPermission()
+        }
+
         val adapter = ToDoListAdapter(requireActivity(), requireContext(), viewModel) {
-            Toast.makeText(requireContext(), "Item Clicked", Toast.LENGTH_SHORT).show()
+            val addDialog = AddToDoFragment(it.id)
+            addDialog.show(childFragmentManager, "Edit ToDo Dialog")
         }
 
         binding.recyclerView.adapter = adapter
@@ -61,7 +68,7 @@ class ToDoListFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
         binding.addItemFab.setOnClickListener {
             val addDialog = AddToDoFragment()
-            addDialog.show(requireActivity().supportFragmentManager, "Add ToDo Dialog")
+            addDialog.show(childFragmentManager, "Add ToDo Dialog")
         }
     }
 
@@ -75,16 +82,20 @@ class ToDoListFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         Toast.makeText(requireContext(), "Permission Granted", Toast.LENGTH_SHORT).show()
     }
 
+    // Easy permissions checks whether the Notification permission is granted or not.
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun hasPermission() =
-        EasyPermissions.hasPermissions(requireContext(), Manifest.permission.POST_NOTIFICATIONS)
+            EasyPermissions.hasPermissions(requireContext(), Manifest.permission.POST_NOTIFICATIONS)
 
+    // If notification permission is not granted, Easy Permission will request the user to grant.
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun requestPermission() {
-        EasyPermissions.requestPermissions(
-            this,
-            "Permission is required to show notifications",
-            NOTIFICATION_PERMISSION_CODE,
-            Manifest.permission.POST_NOTIFICATIONS
-        )
+            EasyPermissions.requestPermissions(
+                this,
+                "Permission is required to show notifications",
+                NOTIFICATION_PERMISSION_CODE,
+                Manifest.permission.POST_NOTIFICATIONS
+            )
     }
 
     override fun onRequestPermissionsResult(
@@ -94,7 +105,7 @@ class ToDoListFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        //EasyPermissions handles the request result
+        // EasyPermissions handles the request result
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
 
