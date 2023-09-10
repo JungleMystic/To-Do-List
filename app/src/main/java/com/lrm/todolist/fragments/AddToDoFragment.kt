@@ -1,12 +1,15 @@
 package com.lrm.todolist.fragments
 
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
@@ -19,6 +22,7 @@ import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_CLOC
 import com.google.android.material.timepicker.TimeFormat
 import com.lrm.todolist.R
 import com.lrm.todolist.ToDoApplication
+import com.lrm.todolist.constants.TAG
 import com.lrm.todolist.database.ToDoEntity
 import com.lrm.todolist.databinding.FragmentAddToDoBinding
 import com.lrm.todolist.viewmodel.ToDoViewModel
@@ -38,6 +42,8 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
         )
     }
 
+    private val calendar = Calendar.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, R.style.custom_dialog)
@@ -54,14 +60,18 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         // To dismiss the dialog fragment
         binding.closeBtn.setOnClickListener { dismiss() }
+
+        Log.i(TAG, "AddToDoFragment: toDoId -> $toDoId")
 
         if (toDoId > 0) {
             // Setting the title of this dialog based on the toDoId
             binding.dialogTitle.text = getString(R.string.edit_todo)
 
             viewModel.retrieveEvent(toDoId).observe(this.viewLifecycleOwner) {todo ->
+                Log.i(TAG, "Retrieved from Room DB -> $todo")
                 bindData(todo)
             }
             binding.save.text = getString(R.string.update)
@@ -75,7 +85,10 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
             binding.title.requestFocus()
 
             // To save the To Do item in database
-            binding.save.setOnClickListener { addNewToDO() }
+            binding.save.setOnClickListener {
+                hideSoftKeyboard()
+                addNewToDo()
+            }
         }
 
         // To show the date picker dialog
@@ -95,11 +108,16 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
             time.setText(todo.time, TextView.BufferType.SPANNABLE)
 
             // To update the To Do item in database
-            binding.save.setOnClickListener {updateToDo()}
+            binding.save.setOnClickListener {
+                hideSoftKeyboard()
+                updateToDo()
+            }
         }
     }
 
-    private fun addNewToDO() {
+    private fun addNewToDo() {
+        Log.i(TAG, "addNewToDO is called")
+
         // Getting the data from edit text fields and storing in the below variables.
         val title = binding.title.text.toString().trim()
         val date = binding.date.text.toString()
@@ -114,6 +132,8 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
     }
 
     private fun updateToDo() {
+        Log.i(TAG, "updateToDo is called")
+
         // Getting the data from edit text fields and storing in the below variables.
         val title = binding.title.text.toString().trim()
         val date = binding.date.text.toString()
@@ -128,6 +148,8 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
     }
 
     private fun showDatePickerDialog() {
+        Log.i(TAG, "showDatePickerDialog is called")
+
         // Makes only dates from today forward selectable.
         val dateConstraints = CalendarConstraints.Builder()
             .setValidator(DateValidatorPointForward.now())
@@ -145,15 +167,18 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
         datePicker.show(childFragmentManager, "Date Picker")
 
         datePicker.addOnPositiveButtonClickListener {
+            Log.i(TAG, "showDatePickerDialog: Selected Date -> ${datePicker.headerText}")
             val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-            val date = sdf.format(datePicker.selection)
-            binding.date.setText(date)
+            val formattedDate = sdf.format(datePicker.selection)
+            Log.i(TAG, "showDatePickerDialog: Formatted Date -> $formattedDate")
+            binding.date.setText(formattedDate)
         }
     }
 
     private fun showTimePickerDialog() {
+        Log.i(TAG, "showTimePickerDialog is called")
+
         // To get the current time and show in the time picker dialog
-        val calendar = Calendar.getInstance()
         val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
         val currentMinute = calendar.get(Calendar.MINUTE)
 
@@ -173,15 +198,18 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
             val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
             val hour = timePicker.hour
             val minute = timePicker.minute
-            val calendar = Calendar.getInstance()
+            Log.i(TAG, "showTimePickerDialog: Selected Time -> $hour:$minute")
             calendar.set(Calendar.HOUR_OF_DAY, hour)
             calendar.set(Calendar.MINUTE, minute)
-            binding.time.setText(sdf.format(calendar.time).replace("am", "AM").replace("pm", "PM"))
+            val formattedTime = sdf.format(calendar.time).replace("am", "AM").replace("pm", "PM")
+            Log.i(TAG, "showTimePickerDialog: Formatted Time -> $formattedTime")
+            binding.time.setText(formattedTime)
         }
     }
 
     override fun onStart() {
         super.onStart()
+        Log.i(TAG, "onStart is called")
         dialog?.window?.setLayout(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.WRAP_CONTENT
@@ -189,8 +217,21 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
+    // To hide the on screen keyboard
+    private fun hideSoftKeyboard() {
+        Log.i(TAG, "hideSoftKeyboard is called")
+        val inputManager = requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(requireActivity().currentFocus?.windowToken, 0)
+    }
+
+    override fun dismiss() {
+        super.dismiss()
+        Log.i(TAG, "dismiss is called")
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.i(TAG, "onDestroyView is called")
         _binding = null
     }
 }

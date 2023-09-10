@@ -2,12 +2,14 @@ package com.lrm.todolist.viewmodel
 
 import android.content.Context
 import android.text.TextUtils
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.lrm.todolist.constants.TAG
 import com.lrm.todolist.database.ToDoDao
 import com.lrm.todolist.database.ToDoEntity
 import kotlinx.coroutines.launch
@@ -20,6 +22,7 @@ class ToDoViewModel(
 
     // To insert a To do item in the database
     private fun insertToDo(todo: ToDoEntity) {
+        Log.i(TAG, "insertToDo is called")
         viewModelScope.launch {
             toDoDao.insert(todo)
         }
@@ -32,6 +35,7 @@ class ToDoViewModel(
     }
 
     fun isEntryValid(context: Context, title: String, date: String, time: String): Boolean {
+        Log.i(TAG, "isEntryValid is called -> Title: $title, Date: $date, Time: $time")
         return when {
             TextUtils.isEmpty(title) -> {
                 Toast.makeText(context, "Please enter Title...", Toast.LENGTH_SHORT).show()

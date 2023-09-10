@@ -3,6 +3,7 @@ package com.lrm.todolist.fragments
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.lrm.todolist.R
 import com.lrm.todolist.ToDoApplication
 import com.lrm.todolist.adapter.ToDoListAdapter
 import com.lrm.todolist.constants.NOTIFICATION_PERMISSION_CODE
+import com.lrm.todolist.constants.TAG
 import com.lrm.todolist.databinding.FragmentToDoListBinding
 import com.lrm.todolist.viewmodel.ToDoViewModel
 import com.lrm.todolist.viewmodel.ToDoViewModelFactory
@@ -55,30 +57,35 @@ class ToDoListFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         }
 
         binding.recyclerView.adapter = adapter
-        viewModel.getAll.observe(this.viewLifecycleOwner) { todo ->
-            if (todo.isEmpty()) {
+        viewModel.getAll.observe(this.viewLifecycleOwner) { todos ->
+            Log.i(TAG, "getAllToDos -> $todos")
+            if (todos.isEmpty()) {
+                Log.i(TAG, "Nothing ToDo is shown")
                 binding.recyclerView.visibility = View.GONE
                 binding.noTodoFound.visibility = View.VISIBLE
             } else {
                 binding.recyclerView.visibility = View.VISIBLE
                 binding.noTodoFound.visibility = View.GONE
-                todo.let { adapter.submitList(it) }
+                todos.let { adapter.submitList(it) }
             }
         }
 
         binding.addItemFab.setOnClickListener {
+            Log.i(TAG, "AddToDo Dialog is shown")
             val addDialog = AddToDoFragment()
             addDialog.show(childFragmentManager, "Add ToDo Dialog")
         }
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
+        // Show a dialog to go to settings, if the permission is permanently denied.
         if (EasyPermissions.permissionPermanentlyDenied(this, perms.first())) {
             SettingsDialog.Builder(requireContext()).build().show()
         }
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
+        Log.i(TAG, "onPermissionsGranted -> Notification permission is called ")
         Toast.makeText(requireContext(), "Permission Granted", Toast.LENGTH_SHORT).show()
     }
 
@@ -111,6 +118,7 @@ class ToDoListFragment : Fragment(), EasyPermissions.PermissionCallbacks {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.i(TAG, "onDestroyView is called")
         _binding = null
     }
 }
