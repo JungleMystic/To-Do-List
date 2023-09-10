@@ -101,7 +101,7 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
 
     private fun addNewToDO() {
         // Getting the data from edit text fields and storing in the below variables.
-        val title = binding.title.text.toString()
+        val title = binding.title.text.toString().trim()
         val date = binding.date.text.toString()
         val time = binding.time.text.toString()
 
@@ -115,7 +115,7 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
 
     private fun updateToDo() {
         // Getting the data from edit text fields and storing in the below variables.
-        val title = binding.title.text.toString()
+        val title = binding.title.text.toString().trim()
         val date = binding.date.text.toString()
         val time = binding.time.text.toString()
 
@@ -152,16 +152,18 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
     }
 
     private fun showTimePickerDialog() {
-
-        //val currentTime =
+        // To get the current time and show in the time picker dialog
+        val calendar = Calendar.getInstance()
+        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+        val currentMinute = calendar.get(Calendar.MINUTE)
 
         val timePicker =
             MaterialTimePicker.Builder()
                 .setTimeFormat(TimeFormat.CLOCK_12H)
                 .setTitleText("Set the Time")
                 .setInputMode(INPUT_MODE_CLOCK)
-                .setHour(12)
-                .setMinute(10)
+                .setHour(currentHour)
+                .setMinute(currentMinute)
                 .setTheme(R.style.ThemeOverlay_App_MaterialTime)
                 .build()
 
