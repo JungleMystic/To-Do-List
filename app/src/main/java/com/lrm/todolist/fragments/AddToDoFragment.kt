@@ -1,6 +1,11 @@
 package com.lrm.todolist.fragments
 
+import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context.ALARM_SERVICE
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -25,6 +30,7 @@ import com.lrm.todolist.ToDoApplication
 import com.lrm.todolist.constants.TAG
 import com.lrm.todolist.database.ToDoEntity
 import com.lrm.todolist.databinding.FragmentAddToDoBinding
+import com.lrm.todolist.utils.AlarmReceiver
 import com.lrm.todolist.viewmodel.ToDoViewModel
 import com.lrm.todolist.viewmodel.ToDoViewModelFactory
 import java.text.SimpleDateFormat
@@ -43,6 +49,7 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
     }
 
     private val calendar = Calendar.getInstance()
+    private val setCalendar: Calendar = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -126,9 +133,28 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
         // Check if all the fields are not empty
         if (viewModel.isEntryValid(requireContext(), title, date, time)) {
             viewModel.addNewToDo(title, date, time)
+            setAlarm()
+            Log.i(TAG, "addNewToDo -> setting alarm -> " +
+                    "${setCalendar.get(Calendar.DAY_OF_MONTH)}/${setCalendar.get(Calendar.MONTH)}/${setCalendar.get(Calendar.YEAR)}  ${setCalendar.get(Calendar.HOUR)}:${setCalendar.get(Calendar.MINUTE)}")
             dismiss()
             Toast.makeText(requireContext(), "Successfully added...", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    @SuppressLint("ScheduleExactAlarm")
+    private fun setAlarm() {
+        val date = binding.date.text.toString()
+        val time = binding.time.text.toString()
+
+        val alarmManager = requireActivity().getSystemService(ALARM_SERVICE) as AlarmManager
+        val intent = Intent(requireActivity(), AlarmReceiver::class.java)
+        intent.putExtra("Title", binding.title.text.toString())
+        intent.putExtra("Message", "Reminder: $date  $time")
+
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent,
+            PendingIntent.FLAG_IMMUTABLE)
+
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, setCalendar.timeInMillis, pendingIntent)
     }
 
     private fun updateToDo() {
@@ -170,8 +196,12 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
             Log.i(TAG, "showDatePickerDialog: Selected Date -> ${datePicker.headerText}")
             val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
             val formattedDate = sdf.format(datePicker.selection)
+            val date = sdf.parse(formattedDate)
+            setCalendar.time = date!!
+            Log.i(TAG, "showDatePickerDialog: Parsed Date -> $date")
             Log.i(TAG, "showDatePickerDialog: Formatted Date -> $formattedDate")
             binding.date.setText(formattedDate)
+            showTimePickerDialog()
         }
     }
 
@@ -198,12 +228,20 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
             val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
             val hour = timePicker.hour
             val minute = timePicker.minute
+            setCalendar.set(Calendar.HOUR_OF_DAY, hour)
+            setCalendar.set(Calendar.MINUTE, minute)
             Log.i(TAG, "showTimePickerDialog: Selected Time -> $hour:$minute")
             calendar.set(Calendar.HOUR_OF_DAY, hour)
             calendar.set(Calendar.MINUTE, minute)
             val formattedTime = sdf.format(calendar.time).replace("am", "AM").replace("pm", "PM")
             Log.i(TAG, "showTimePickerDialog: Formatted Time -> $formattedTime")
             binding.time.setText(formattedTime)
+        }
+        timePicker.addOnNegativeButtonClickListener {
+            binding.time.setText("")
+        }
+        timePicker.addOnCancelListener {
+            binding.time.setText("")
         }
     }
 
