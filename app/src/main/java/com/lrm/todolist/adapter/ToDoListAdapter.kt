@@ -33,13 +33,31 @@ class ToDoListAdapter(
             binding.title.text = toDo.title
             binding.date.text = toDo.date
             binding.time.text = toDo.time
-            if (toDo.isShow == 1) {
+
+            if (toDo.isCompleted == 1) {
+                binding.doneCheckbox.isChecked = true
                 binding.toDoCard.cardElevation = 0.0f
                 binding.toDoCard.strokeColor = ContextCompat.getColor(context, R.color.light_grey)
                 binding.toDoCard.strokeWidth = 1
                 binding.title.setTypeface(null, Typeface.NORMAL)
                 binding.title.setTextColor(ContextCompat.getColor(context, R.color.light_grey))
                 binding.readIcon.visibility = View.VISIBLE
+            } else {
+                binding.doneCheckbox.isChecked = false
+                binding.toDoCard.cardElevation = 7.0f
+                binding.toDoCard.strokeColor = ContextCompat.getColor(context, R.color.light_grey)
+                binding.toDoCard.strokeWidth = 0.5.toInt()
+                binding.title.setTypeface(null, Typeface.BOLD)
+                binding.title.setTextColor(ContextCompat.getColor(context, R.color.blue))
+                binding.readIcon.visibility = View.GONE
+            }
+
+            binding.doneCheckbox.setOnClickListener {
+                if (binding.doneCheckbox.isChecked) {
+                    viewModel.updateCompletedToDo(toDo.id, 1)
+                } else {
+                    viewModel.updateCompletedToDo(toDo.id, 0)
+                }
             }
         }
     }

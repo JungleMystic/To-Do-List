@@ -26,6 +26,6 @@ interface ToDoDao {
     @Query("SELECT * FROM to_do_table WHERE id = :id")
     fun getToDo(id: Int): Flow<ToDoEntity>
 
-    @Query("UPDATE to_do_table SET isShow = :isShow WHERE id LIKE :id")
-    fun updateIsShown(id: Int, isShow: Int)
+    @Query("UPDATE to_do_table SET isCompleted = :isCompleted WHERE id LIKE :id")
+    suspend fun completedToDo(id: Int, isCompleted: Int)
 }

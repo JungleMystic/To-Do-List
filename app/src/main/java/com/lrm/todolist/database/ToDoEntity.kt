@@ -14,6 +14,6 @@ data class ToDoEntity(
     val date: String = "",
     @ColumnInfo(name = "time")
     val time: String = "",
-    @ColumnInfo(name = "isShow")
-    val isShow: Int = 0
+    @ColumnInfo(name = "isCompleted")
+    val isCompleted: Int = 0
 )

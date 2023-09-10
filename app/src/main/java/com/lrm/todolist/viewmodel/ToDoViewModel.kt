@@ -74,6 +74,12 @@ class ToDoViewModel(
             toDoDao.delete(todo)
         }
     }
+
+    fun updateCompletedToDo(id: Int, isCompleted: Int) {
+        viewModelScope.launch {
+            toDoDao.completedToDo(id, isCompleted)
+        }
+    }
 }
 
 class ToDoViewModelFactory(private val toDoDao: ToDoDao) : ViewModelProvider.Factory {
