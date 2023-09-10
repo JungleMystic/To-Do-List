@@ -4,10 +4,12 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +32,13 @@ class ToDoListAdapter(
             binding.title.text = toDo.title
             binding.date.text = toDo.date
             binding.time.text = toDo.time
+            if (toDo.isShow == 1) {
+                binding.toDoCard.cardElevation = 0.0f
+                binding.toDoCard.strokeColor = ContextCompat.getColor(context, R.color.light_grey)
+                binding.toDoCard.strokeWidth = 1
+                binding.title.setTypeface(null, Typeface.NORMAL)
+                binding.title.setTextColor(ContextCompat.getColor(context, R.color.light_grey))
+            }
         }
     }
 
