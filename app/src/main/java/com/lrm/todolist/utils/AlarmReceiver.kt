@@ -7,8 +7,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Handler
-import android.os.Looper
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -24,11 +22,14 @@ class AlarmReceiver : BroadcastReceiver() {
         // Open the MainActivity, when we press on Notification
         val i = Intent(context, MainActivity::class.java)
         intent!!.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+        // Get the extras from the Intent
         val notificationTitle: String = intent.getStringExtra("Title").toString()
         val messageText: String = intent.getStringExtra("Message").toString()
         val requestCode = intent.getIntExtra("RequestCode", 0)
 
-        val pendingIntent = PendingIntent.getActivity(context, requestCode, i, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent =
+            PendingIntent.getActivity(context, requestCode, i, PendingIntent.FLAG_IMMUTABLE)
 
         // Building a Notification here...
         val builder = NotificationCompat.Builder(context!!, CHANNEL_ID)
@@ -52,11 +53,11 @@ class AlarmReceiver : BroadcastReceiver() {
             notify(getNotificationId(), builder)
         }
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            alarmManager.cancel(pendingIntent)
-        }, 2000)
+        // To cancel the alarm after getting the notification
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.cancel(pendingIntent)
     }
 
-    private fun getNotificationId(): Int = (Date().time/1000 % Integer.MAX_VALUE).toInt()
+    // To get unique notification id
+    private fun getNotificationId(): Int = (Date().time / 1000 % Integer.MAX_VALUE).toInt()
 }
