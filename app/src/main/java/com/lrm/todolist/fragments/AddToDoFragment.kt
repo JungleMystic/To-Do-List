@@ -36,6 +36,7 @@ import com.lrm.todolist.viewmodel.ToDoViewModelFactory
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import kotlin.random.Random
 
 class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
 
@@ -145,13 +146,15 @@ class AddToDoFragment(private val toDoId: Int = -1) : DialogFragment() {
     private fun setAlarm() {
         val date = binding.date.text.toString()
         val time = binding.time.text.toString()
+        val pendingIntentRequestCode = Random.nextInt()
 
         val alarmManager = requireActivity().getSystemService(ALARM_SERVICE) as AlarmManager
         val intent = Intent(requireActivity(), AlarmReceiver::class.java)
         intent.putExtra("Title", binding.title.text.toString())
         intent.putExtra("Message", "ToDo on: $date  $time")
+        intent.putExtra("RequestCode", pendingIntentRequestCode)
 
-        val pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(), pendingIntentRequestCode, intent, PendingIntent.FLAG_IMMUTABLE)
 
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, setCalendar.timeInMillis, pendingIntent)
     }
